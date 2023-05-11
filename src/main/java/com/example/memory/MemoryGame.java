@@ -41,7 +41,7 @@ public class MemoryGame extends Application {
         // Input Select pour choisir le theme
         Label themeLabel = new Label("Choisissez un thème:");
         ChoiceBox<String> themeChoice = new ChoiceBox<>();
-        themeChoice.getItems().addAll("Star Wars", "Harry Potter", "Hunter x Hunter");
+        themeChoice.getItems().addAll("Star Wars", "One Piece", "Hunter x Hunter");
         themeChoice.setValue("Star Wars");
 
         // Input Select pour choisir le niveau de difficulté du jeu
