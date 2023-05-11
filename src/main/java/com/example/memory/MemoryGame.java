@@ -26,7 +26,7 @@ public class MemoryGame extends Application {
         private Stage stage;
         private Scene scene;
         private String theme;
-        private int difficulty;
+        private String difficulty;
         private String nomJoueur1;
         private String nomJoueur2;
 
@@ -64,7 +64,7 @@ public class MemoryGame extends Application {
             Button startButton = new Button("Jouer");
             startButton.setOnAction(e -> {
                 theme = themeChoice.getValue();
-                difficulty = difficultyChoice.getSelectionModel().getSelectedIndex();
+                difficulty = difficultyChoice.getValue();
                 nomJoueur1 = nomField1.getText();
                 nomJoueur2 = nomField2.getText();
                 System.out.println(theme);
@@ -76,7 +76,7 @@ public class MemoryGame extends Application {
                 System.out.println("Jouer cliqué!");
                 // Lancer le jeu
                 // Créer la grille de jeu
-                GridPane gameGrid = createCardsGrid(difficulty, theme);
+                GridPane gameGrid = createCardsGrid(difficulty, theme, nomJoueur1, nomJoueur2);
 
                 // Créer une nouvelle scène pour afficher la grille de jeu
                 Scene gameScene = new Scene(gameGrid);
@@ -98,62 +98,65 @@ public class MemoryGame extends Application {
     public Node getNode() {
         return imageView;
     }
-    public GridPane createCardsGrid(int difficulty, String theme) {
+    public GridPane createCardsGrid(String difficulty, String theme, String nomJoueur1, String nomJoueur2) {
         // Détermine le nombre de cartes en fonction de la difficulté
         int numCards = 0;
-        switch (difficulty) {
-            case 0:
 
+        switch (difficulty) {
+            case "Easy":
                 numCards = 16;
                 break;
-            case 1:
+            case "Medium":
                 numCards = 36;
                 break;
-            case 2:
+            case "Hard":
                 numCards = 64;
                 break;
             default:
                 break;
         }
 
-        // Crée une liste de paires de cartes identiques
-        List<Card> pairs = new ArrayList<>();
-        for (int i = 1; i <= numCards / 2; i++) {
-            pairs.add(new Card(Integer.toString(i)));
-            pairs.add(new Card(Integer.toString(i)));
+        // Créer une liste de cartes
+        List<Card> cards = new ArrayList<>();
+        for (int i = 1; i <= numCards; i++) {
+            String imagePath = "/com/example/memory/images/" + theme + "/" + i + ".png";
+            Image frontImage = new Image(getClass().getResourceAsStream(imagePath));
+            ImageView frontImageView = new ImageView(frontImage);
+            frontImageView.setFitWidth(100); // Adapter la taille selon vos besoins
+            frontImageView.setFitHeight(100);
+
+            // Créer l'image pour représenter le dos de la carte
+            Image backImage = new Image(getClass().getResourceAsStream("/com/example/memory/images/base.png"));
+            ImageView backImageView = new ImageView(backImage);
+            backImageView.setFitWidth(100); // Adapter la taille selon vos besoins
+            backImageView.setFitHeight(100);
+
+            Card card = new Card("Card" + i, backImageView, frontImageView);
+            cards.add(card);
         }
 
-        // Mélange la liste de paires de cartes
-        Collections.shuffle(pairs);
-
-        // Crée une grille de cartes à partir de la liste mélangée
-        GridPane grid = new GridPane();
+        // Créer une grille de cartes à partir de la liste mélangée
+        GridPane gridPane = new GridPane();
 
         int numCols = (int) Math.sqrt(numCards);
         int numRows = numCards / numCols;
 
-        // Charge les images en fonction du thème
-        // Charge les images en fonction du thème
-        List<ImageView> imageViews = new ArrayList<>();
-        for (int i = 1; i <= numCards / 2; i++) {
-            String imagePath = "/com/example/memory/" + theme + "/" + i + ".png";
-            Image image = new Image(getClass().getResourceAsStream(imagePath));
-            ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(100); // Adapter la taille selon vos besoins
-            imageView.setFitHeight(100);
-            imageViews.add(imageView);
-        }
+        // Ajouter les labels de score pour chaque joueur
+        Label scoreLabel1 = new Label(nomJoueur1 + ": 0 points");
+        Label scoreLabel2 = new Label(nomJoueur2 + ": 0 points");
+        HBox scoreBox = new HBox(scoreLabel1, scoreLabel2);
+        scoreBox.setSpacing(20);
+        scoreBox.setAlignment(Pos.CENTER);
+        gridPane.add(scoreBox, 0, numRows + 1, numCols, 1);
 
-        int index = 0;
-        for (int i = 0; i < pairs.size(); i++) {
-            Card card = pairs.get(i);
-            // Ajoute l'image correspondante à la carte
-            card.setImageView(imageViews.get(index));
-            index = (index + 1) % (numCards / 2);
-            grid.add(card.getNode(), i % numCols, i / numCols);
+        // Ajouter les cartes à la grille
+        for (int i = 0; i < numCards; i++) {
+            Card card = cards.get(i);
+            int row = i / numRows;
+            int col = i % numRows;
+            gridPane.add(card, col, row);
         }
-
-        return grid;
+        return gridPane;
     }
 
     public static void main(String[] args) {

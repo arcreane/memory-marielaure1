@@ -1,51 +1,44 @@
 package com.example.memory;
 
-import javafx.scene.Node;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 
+public class Card extends StackPane {
+    private String name;
+    private ImageView backImageView; // Image pour représenter le dos de la carte
+    private ImageView frontImageView; // Image pour représenter le recto de la carte
+    private boolean isFaceUp; // Indique si la carte est retournée face visible ou pas
 
-public class Card {
-    private String imagePath;
-    private boolean isFlipped;
-    private boolean isMatched;
-
-    private ImageView imageView;
-
-    public Card(String imagePath) {
-        this.imagePath = imagePath;
-        this.isFlipped = false;
-        this.isMatched = false;
+    public Card(String name, ImageView backImageView, ImageView frontImageView) {
+        this.name = name;
+        this.backImageView = backImageView;
+        this.frontImageView = frontImageView;
+        getChildren().addAll(backImageView, frontImageView);
+        isFaceUp = false; // Initialiser toutes les cartes à l'envers
+        showBack(); // Afficher le dos de la carte
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getName() {
+        return name;
     }
 
-    public void flip() {
-        isFlipped = !isFlipped;
+    public ImageView getFrontImageView() {
+        return frontImageView;
     }
 
-    public boolean isFlipped() {
-
-        return isFlipped;
+    public boolean isFaceUp() {
+        return isFaceUp;
     }
 
-    public boolean isMatched() {
-
-        return isMatched;
+    public void showFront() {
+        frontImageView.setVisible(true);
+        backImageView.setVisible(false);
+        isFaceUp = true;
     }
 
-    public void setMatched(boolean matched) {
-
-        isMatched = matched;
-    }
-
-    public Node getNode() {
-        return imageView;
-    }
-
-    public void setImageView(ImageView imageView) {
-        this.imageView = imageView;
+    public void showBack() {
+        frontImageView.setVisible(false);
+        backImageView.setVisible(true);
+        isFaceUp = false;
     }
 }
-
