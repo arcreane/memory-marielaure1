@@ -56,7 +56,7 @@ public class Card extends StackPane {
     public ImageView getBackImageView() {
         return backImageView;
     }
-    
+
     public boolean isFaceUp() {
         return isFaceUp;
     }
